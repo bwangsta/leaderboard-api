@@ -15,6 +15,18 @@ const gameSchema = new mongoose.Schema({
       ref: "Player",
     },
   ],
+  points: [
+    {
+      type: Map,
+      of: Number,
+    },
+  ],
+  roles: [
+    {
+      type: Map,
+      of: String,
+    },
+  ],
   winners: [
     {
       type: mongoose.Schema.ObjectId,

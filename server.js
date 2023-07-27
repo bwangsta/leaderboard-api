@@ -1,4 +1,5 @@
 require("dotenv").config()
+const morgan = require("morgan")
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
@@ -15,6 +16,7 @@ db.on("error", (err) => console.error(err))
 db.once("open", () => console.log("Connected to Database"))
 
 app.use(cors())
+app.use(morgan("tiny"))
 app.use(express.json())
 app.use("/games", gamesRouter)
 app.use("/players", playersRouter)

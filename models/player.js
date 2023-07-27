@@ -9,12 +9,6 @@ const playerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  games: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Game",
-    },
-  ],
 })
 
 module.exports = mongoose.model("Player", playerSchema)
