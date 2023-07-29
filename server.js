@@ -21,6 +21,10 @@ app.use(express.json())
 app.use("/games", gamesRouter)
 app.use("/players", playersRouter)
 
+app.all("*", (req, res, next) => {
+  next(res.status(404).json({ message: "Page Not Found" }))
+})
+
 app.listen(PORT, () => {
   console.log(`Server Started. Listening On Port ${PORT}`)
 })
