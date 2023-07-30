@@ -1,52 +1,64 @@
 const express = require("express")
+const AppError = require("../utils/AppError")
+const catchAsync = require("../utils/catch-async")
 const Player = require("../models/player")
 
 const router = express.Router()
 
 // Get All
-router.get("/", async (req, res) => {
-  try {
-    const players = await Player.find()
+router.get(
+  "/",
+  catchAsync(async (req, res) => {
+    const players = await Player.find().exec()
     res.json(players)
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-})
+  })
+)
 
 // Get One
-router.get("/:id", async (req, res) => {
-  const { id } = req.params
-  const player = await Player.findById(id)
-  res.json(player)
-})
+router.get(
+  "/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params
+    const player = await Player.findById(id).exec()
+    if (!player) {
+      throw new AppError("Player Not Found", 404)
+    }
+    res.json(player)
+  })
+)
 
 // Create
-router.post("/", async (req, res) => {
-  const player = new Player(req.body)
-  try {
+router.post(
+  "/",
+  catchAsync(async (req, res) => {
+    const player = new Player(req.body)
     const newPlayer = await player.save()
     res.status(201).json(newPlayer)
-  } catch (err) {
-    res.status(400).json({ message: err.message })
-  }
-})
+  })
+)
 
 // Update
-router.patch("/:id", async (req, res) => {
-  const { id } = req.params
-  const player = await Player.findByIdAndUpdate(id, { ...req.body })
-  res.json({
-    message: `Successfully updated ${player.first_name} ${player.last_name}`,
+router.patch(
+  "/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params
+    const player = await Player.findByIdAndUpdate(id, { ...req.body }).exec()
+    res.json({
+      message: `Successfully updated ${player.first_name} ${player.last_name}`,
+    })
   })
-})
+)
 
 // Delete
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params
-  const player = await Player.findByIdAndDelete(id)
-  res.json({
-    message: `Successfully removed ${player.first_name} ${player.last_name}`,
+router.delete(
+  "/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params
+    const player = await Player.findByIdAndDelete(id).exec()
+    res.json({
+      message: `Successfully removed ${player.first_name} ${player.last_name}`,
+    })
   })
-})
+)
 
 module.exports = router

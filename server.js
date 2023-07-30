@@ -3,6 +3,7 @@ const morgan = require("morgan")
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
+const AppError = require("./utils/AppError")
 const gamesRouter = require("./routes/games")
 const playersRouter = require("./routes/players")
 
@@ -22,7 +23,13 @@ app.use("/games", gamesRouter)
 app.use("/players", playersRouter)
 
 app.all("*", (req, res, next) => {
-  next(res.status(404).json({ message: "Page Not Found" }))
+  next(new AppError("Page Not Found", 404))
+})
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message = "Something Went Wrong" } = err
+  res.status(statusCode)
+  res.json({ message: message })
 })
 
 app.listen(PORT, () => {
