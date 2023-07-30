@@ -16,7 +16,7 @@ function generateNumberOfPlayers(game, usernames) {
     case "Catan":
       numberOfPlayers = getRandom(3, 5)
       break
-    case "Bang!":
+    case "Bang":
       numberOfPlayers = getRandom(3, 9)
       break
     case "Mahjong":
@@ -65,9 +65,9 @@ function generateScore(game) {
   return getRandom(min, max)
 }
 
-// Generate random role if the game is Bang!
+// Generate random role if the game is Bang
 function generateRole(game) {
-  if (game === "Bang!") {
+  if (game === "Bang") {
     const index = getRandom(0, bangRoles.length)
     return bangRoles[index]
   }
@@ -76,7 +76,7 @@ function generateRole(game) {
 
 // Generate winner(s) depending on the game
 function generateWinners(game, players) {
-  if (game === "Bang!") {
+  if (game === "Bang") {
     const player = sample(players)
     return player.username
   }

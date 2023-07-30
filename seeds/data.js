@@ -1,4 +1,4 @@
-module.exports.games = ["Catan", "Bang!", "Mahjong", "Ticket To Ride"]
+module.exports.games = ["Catan", "Bang", "Mahjong", "Ticket To Ride"]
 
 module.exports.bangRoles = ["Sheriff", "Renegade", "Outlaw", "Deputy"]
 
