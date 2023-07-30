@@ -1,9 +1,20 @@
 const express = require("express")
 const AppError = require("../utils/AppError")
+const { playerSchema } = require("../schemas")
 const catchAsync = require("../utils/catch-async")
 const Player = require("../models/player")
 
 const router = express.Router()
+
+function validatePlayer(req, res, next) {
+  const { error } = playerSchema.validate(req.body)
+  if (error) {
+    const message = error.details.map((el) => el.message).join(",")
+    throw new AppError(message, 400)
+  } else {
+    next()
+  }
+}
 
 // Get All
 router.get(
@@ -30,6 +41,7 @@ router.get(
 // Create
 router.post(
   "/",
+  validatePlayer,
   catchAsync(async (req, res) => {
     const player = new Player(req.body)
     const newPlayer = await player.save()
@@ -40,6 +52,7 @@ router.post(
 // Update
 router.patch(
   "/:id",
+  validatePlayer,
   catchAsync(async (req, res) => {
     const { id } = req.params
     const player = await Player.findByIdAndUpdate(id, { ...req.body }).exec()

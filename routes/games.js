@@ -2,9 +2,20 @@ const express = require("express")
 const formatQuery = require("./utils/format-query")
 const AppError = require("../utils/AppError")
 const catchAsync = require("../utils/catch-async")
+const { gameSchema } = require("../schemas")
 const Game = require("../models/game")
 
 const router = express.Router()
+
+function validateGame(req, res, next) {
+  const { error } = gameSchema.validate(req.body)
+  if (error) {
+    const message = error.details.map((el) => el.message).join(",")
+    throw new AppError(message, 400)
+  } else {
+    next()
+  }
+}
 
 // Get All
 router.get(
@@ -32,6 +43,7 @@ router.get(
 // Create
 router.post(
   "/",
+  validateGame,
   catchAsync(async (req, res) => {
     const game = new Game(req.body)
     const newGame = await game.save()
@@ -42,6 +54,7 @@ router.post(
 // Update
 router.patch(
   "/:id",
+  validateGame,
   catchAsync(async (req, res) => {
     const { id } = req.params
     await Game.findByIdAndUpdate(id, { ...req.body }).exec()
