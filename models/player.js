@@ -14,6 +14,8 @@ const playerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  wins: Number,
+  played: Number,
 })
 
 module.exports = mongoose.model("Player", playerSchema)

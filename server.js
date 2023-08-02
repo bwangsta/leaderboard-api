@@ -19,6 +19,7 @@ db.once("open", () => console.log("Connected to Database"))
 app.use(cors())
 app.use(morgan("tiny"))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use("/games", gamesRouter)
 app.use("/players", playersRouter)
 

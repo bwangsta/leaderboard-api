@@ -22,7 +22,9 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const query = formatQuery(req.query)
-    games = await Game.find(query).exec()
+    const games = await Game.find(query)
+      .populate("players.player winners", "username")
+      .exec()
     res.json(games)
   })
 )
@@ -32,7 +34,9 @@ router.get(
   "/:id",
   catchAsync(async (req, res) => {
     const { id } = req.params
-    const game = await Game.findById(id).exec()
+    const game = await Game.findById(id)
+      .populate("players.player winners", "username")
+      .exec()
     if (!game) {
       throw new AppError("Game Not Found", 404)
     }

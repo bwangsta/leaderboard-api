@@ -15,7 +15,7 @@ const gameSchema = Joi.object({
   players: Joi.array()
     .items(
       Joi.object({
-        username: Joi.string().required(),
+        player: Joi.string().required(),
         role: Joi.string(),
         score: Joi.number(),
       })

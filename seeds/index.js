@@ -15,7 +15,7 @@ const db = mongoose.connection
 db.on("error", (err) => console.error(err))
 db.once("open", () => console.log("Connected to Database"))
 
-const LIMIT = 10
+const LIMIT = 50
 
 async function seedPlayers() {
   await Player.deleteMany()
@@ -26,6 +26,8 @@ async function seedPlayers() {
       username: `${firstName}${lastName}`,
       first_name: firstName,
       last_name: lastName,
+      wins: 0,
+      played: 0,
     })
     await player.save()
   }
@@ -33,11 +35,11 @@ async function seedPlayers() {
 
 async function seedGames() {
   await Game.deleteMany()
-  const usernames = await Player.find().select("username")
+  const playerIds = await Player.find().select("_id").exec()
 
   for (let i = 0; i < LIMIT; i++) {
     const gameName = sample(games)
-    const players = generateNumberOfPlayers(gameName, usernames)
+    const players = generateNumberOfPlayers(gameName, playerIds)
     const winners = generateWinners(gameName, players)
 
     const game = new Game({
@@ -49,8 +51,23 @@ async function seedGames() {
   }
 }
 
+async function seedPlayerStats() {
+  const players = await Player.find().exec()
+  for (let player of players) {
+    const gamesPlayed = await Game.find({
+      players: { $elemMatch: { player: player } },
+    }).exec()
+    const gamesWon = await Game.find({ winners: { $in: player._id } }).exec()
+    await Player.findByIdAndUpdate(player._id, {
+      wins: gamesWon.length,
+      played: gamesPlayed.length,
+    })
+  }
+}
+
 seedPlayers()
   .then(seedGames)
+  .then(seedPlayerStats)
   .then(() => {
     mongoose.connection.close()
     console.log("Disconnected")

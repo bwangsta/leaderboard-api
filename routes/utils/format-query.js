@@ -1,5 +1,6 @@
 function formatQuery(query) {
-  const { name } = query
+  const { name, player } = query
+  let newQuery = {}
   if (name) {
     const words = name.split("-")
     const formattedWord = words
@@ -7,9 +8,13 @@ function formatQuery(query) {
         return word[0].toUpperCase() + word.substring(1)
       })
       .join(" ")
-    return { ...query, name: formattedWord }
+    newQuery = { ...newQuery, name: formattedWord }
   }
-  return {}
+  if (player) {
+    newQuery = { ...newQuery, players: { $elemMatch: { player: player } } }
+  }
+
+  return newQuery
 }
 
 module.exports = formatQuery

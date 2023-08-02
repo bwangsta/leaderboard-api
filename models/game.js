@@ -9,8 +9,14 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  players: [{ username: String, role: String, score: Number }],
-  winners: [String],
+  players: [
+    {
+      player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
+      role: String,
+      score: Number,
+    },
+  ],
+  winners: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }],
 })
 
 module.exports = mongoose.model("Game", gameSchema)

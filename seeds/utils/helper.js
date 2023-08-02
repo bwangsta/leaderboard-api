@@ -10,7 +10,7 @@ function getRandom(min, max) {
 }
 
 // Generate random number of players depending on the game
-function generateNumberOfPlayers(game, usernames) {
+function generateNumberOfPlayers(game, playerIds) {
   let numberOfPlayers = 0
   switch (game) {
     case "Catan":
@@ -26,10 +26,15 @@ function generateNumberOfPlayers(game, usernames) {
       numberOfPlayers = getRandom(2, 6)
   }
   const players = []
-  for (let i = 0; i < numberOfPlayers; i++) {
+  const uniquePlayers = new Set()
+  let i = 0
+  while (i < numberOfPlayers) {
     const obj = {}
-    const index = getRandom(0, usernames.length)
-    obj.username = usernames[index].username
+    const index = getRandom(0, playerIds.length)
+    if (uniquePlayers.has(index)) {
+      continue
+    }
+    obj.player = playerIds[index]._id
     if (generateRole(game)) {
       obj.role = generateRole(game)
     }
@@ -37,6 +42,8 @@ function generateNumberOfPlayers(game, usernames) {
       obj.score = generateScore(game)
     }
     players.push(obj)
+    uniquePlayers.add(index)
+    i++
   }
   return players
 }
@@ -78,13 +85,13 @@ function generateRole(game) {
 function generateWinners(game, players) {
   if (game === "Bang") {
     const player = sample(players)
-    return player.username
+    return player.player
   }
-  winner = ""
+  winner = null
   maxScore = -Infinity
-  for (const { username, score } of players) {
+  for (const { player, score } of players) {
     if (score >= maxScore) {
-      winner = username
+      winner = player
       maxScore = score
     }
   }
