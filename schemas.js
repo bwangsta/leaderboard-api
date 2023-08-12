@@ -8,10 +8,13 @@ const playerSchema = Joi.object({
   last_name: Joi.string()
     .pattern(new RegExp(/^[a-zA-Z]+$/))
     .required(),
+  wins: Joi.number(),
+  played: Joi.number(),
 })
 
-const gameSchema = Joi.object({
-  name: Joi.string().required(),
+const matchSchema = Joi.object({
+  date: Joi.date(),
+  game: Joi.string().required(),
   players: Joi.array()
     .items(
       Joi.object({
@@ -26,5 +29,5 @@ const gameSchema = Joi.object({
 
 module.exports = {
   playerSchema,
-  gameSchema,
+  matchSchema,
 }

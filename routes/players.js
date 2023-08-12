@@ -52,7 +52,7 @@ router.post(
 // Update
 router.patch(
   "/:id",
-  validatePlayer,
+  // validatePlayer,
   catchAsync(async (req, res) => {
     const { id } = req.params
     const player = await Player.findByIdAndUpdate(id, { ...req.body }).exec()

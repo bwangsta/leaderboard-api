@@ -4,7 +4,7 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const AppError = require("./utils/AppError")
-const gamesRouter = require("./routes/games")
+const matchesRouter = require("./routes/matches")
 const playersRouter = require("./routes/players")
 
 const app = express()
@@ -20,7 +20,7 @@ app.use(cors())
 app.use(morgan("tiny"))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use("/games", gamesRouter)
+app.use("/matches", matchesRouter)
 app.use("/players", playersRouter)
 
 app.all("*", (req, res, next) => {

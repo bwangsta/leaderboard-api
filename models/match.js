@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 
-const gameSchema = new mongoose.Schema({
+const matchSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
   },
-  name: {
+  game: {
     type: String,
     required: true,
   },
@@ -19,4 +19,4 @@ const gameSchema = new mongoose.Schema({
   winners: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }],
 })
 
-module.exports = mongoose.model("Game", gameSchema)
+module.exports = mongoose.model("Match", matchSchema)

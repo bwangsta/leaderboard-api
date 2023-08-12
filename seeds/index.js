@@ -7,7 +7,7 @@ const {
   generateWinners,
 } = require("./utils/helper")
 const Player = require("../models/player")
-const Game = require("../models/game")
+const Match = require("../models/match")
 
 mongoose.connect(process.env.DATABASE_URI)
 const db = mongoose.connection
@@ -15,11 +15,12 @@ const db = mongoose.connection
 db.on("error", (err) => console.error(err))
 db.once("open", () => console.log("Connected to Database"))
 
-const LIMIT = 50
+const PLAYER_LIMIT = 10
+const MATCHES_LIMIT = 100
 
 async function seedPlayers() {
   await Player.deleteMany()
-  for (let i = 0; i < LIMIT; i++) {
+  for (let i = 0; i < PLAYER_LIMIT; i++) {
     const firstName = firstNames[i]
     const lastName = lastNames[i]
     const player = new Player({
@@ -33,40 +34,40 @@ async function seedPlayers() {
   }
 }
 
-async function seedGames() {
-  await Game.deleteMany()
+async function seedMatches() {
+  await Match.deleteMany()
   const playerIds = await Player.find().select("_id").exec()
 
-  for (let i = 0; i < LIMIT; i++) {
-    const gameName = sample(games)
-    const players = generateNumberOfPlayers(gameName, playerIds)
-    const winners = generateWinners(gameName, players)
+  for (let i = 0; i < MATCHES_LIMIT; i++) {
+    const game = sample(games)
+    const players = generateNumberOfPlayers(game, playerIds)
+    const winners = generateWinners(game, players)
 
-    const game = new Game({
-      name: gameName,
+    const match = new Match({
+      game: game,
       players: players,
       winners: winners,
     })
-    await game.save()
+    await match.save()
   }
 }
 
 async function seedPlayerStats() {
   const players = await Player.find().exec()
   for (let player of players) {
-    const gamesPlayed = await Game.find({
+    const matchesPlayed = await Match.find({
       players: { $elemMatch: { player: player } },
     }).exec()
-    const gamesWon = await Game.find({ winners: { $in: player._id } }).exec()
+    const matchesWon = await Match.find({ winners: { $in: player._id } }).exec()
     await Player.findByIdAndUpdate(player._id, {
-      wins: gamesWon.length,
-      played: gamesPlayed.length,
+      wins: matchesWon.length,
+      played: matchesPlayed.length,
     })
   }
 }
 
 seedPlayers()
-  .then(seedGames)
+  .then(seedMatches)
   .then(seedPlayerStats)
   .then(() => {
     mongoose.connection.close()
