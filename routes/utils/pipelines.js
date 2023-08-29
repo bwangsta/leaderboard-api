@@ -8,13 +8,13 @@ const createRankings = [
   {
     $addFields: {
       isWinner: {
-        $cond: [{ $eq: ["$players._id", "$winners._id"] }, 1, 0],
+        $cond: [{ $eq: ["$players.player_id", "$winners.player_id"] }, 1, 0],
       },
     },
   },
   {
     $group: {
-      _id: "$players._id",
+      _id: "$players.player_id",
       username: { $first: "$players.username" },
       wins: { $sum: "$isWinner" },
       played: { $count: {} },
