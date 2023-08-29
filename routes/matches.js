@@ -1,5 +1,5 @@
 const express = require("express")
-const formatQuery = require("./utils/format-query")
+const { formatQuery } = require("./utils/formatter")
 const AppError = require("../utils/AppError")
 const catchAsync = require("../utils/catch-async")
 const { matchSchema } = require("../schemas")
@@ -22,10 +22,8 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const query = formatQuery(req.query)
-    const matches = await Match.find(query)
-      .populate("players.player winners", "username")
-      .sort({ date: "descending" })
-      .exec()
+    console.log(query)
+    const matches = await Match.find(query).sort({ date: "descending" }).exec()
     res.json(matches)
   })
 )
@@ -35,9 +33,7 @@ router.get(
   "/:id",
   catchAsync(async (req, res) => {
     const { id } = req.params
-    const match = await Match.findById(id)
-      .populate("players.player winners", "username")
-      .exec()
+    const match = await Match.findById(id).exec()
     if (!match) {
       throw new AppError("Match Not Found", 404)
     }

@@ -1,11 +1,7 @@
 require("dotenv").config()
 const mongoose = require("mongoose")
 const { firstNames, lastNames, games } = require("./data")
-const {
-  sample,
-  generateNumberOfPlayers,
-  generateWinners,
-} = require("./utils/helper")
+const { sample, generatePlayers, generateWinners } = require("./utils/helper")
 const Player = require("../models/player")
 const Match = require("../models/match")
 
@@ -27,8 +23,6 @@ async function seedPlayers() {
       username: `${firstName}${lastName}`,
       first_name: firstName,
       last_name: lastName,
-      wins: 0,
-      played: 0,
     })
     await player.save()
   }
@@ -36,11 +30,11 @@ async function seedPlayers() {
 
 async function seedMatches() {
   await Match.deleteMany()
-  const playerIds = await Player.find().select("_id").exec()
+  const playerInfo = await Player.find({}, "_id username").exec()
 
   for (let i = 0; i < MATCHES_LIMIT; i++) {
     const game = sample(games)
-    const players = generateNumberOfPlayers(game, playerIds)
+    const players = generatePlayers(game, playerInfo)
     const winners = generateWinners(game, players)
 
     const match = new Match({
@@ -52,23 +46,8 @@ async function seedMatches() {
   }
 }
 
-async function seedPlayerStats() {
-  const players = await Player.find().exec()
-  for (let player of players) {
-    const matchesPlayed = await Match.find({
-      players: { $elemMatch: { player: player } },
-    }).exec()
-    const matchesWon = await Match.find({ winners: { $in: player._id } }).exec()
-    await Player.findByIdAndUpdate(player._id, {
-      wins: matchesWon.length,
-      played: matchesPlayed.length,
-    })
-  }
-}
-
 seedPlayers()
   .then(seedMatches)
-  .then(seedPlayerStats)
   .then(() => {
     mongoose.connection.close()
     console.log("Disconnected")

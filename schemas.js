@@ -8,8 +8,6 @@ const playerSchema = Joi.object({
   last_name: Joi.string()
     .pattern(new RegExp(/^[a-zA-Z]+$/))
     .required(),
-  wins: Joi.number(),
-  played: Joi.number(),
 })
 
 const matchSchema = Joi.object({
@@ -18,13 +16,19 @@ const matchSchema = Joi.object({
   players: Joi.array()
     .items(
       Joi.object({
-        player: Joi.string().required(),
+        player_id: Joi.string(),
+        username: Joi.string().required(),
         role: Joi.string(),
         score: Joi.number(),
       })
     )
     .required(),
-  winners: Joi.array().items(Joi.string()).min(1).required(),
+  winners: Joi.array()
+    .items(
+      Joi.object({ player_id: Joi.string(), username: Joi.string().required() })
+    )
+    .min(1)
+    .required(),
 })
 
 module.exports = {

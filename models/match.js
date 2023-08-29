@@ -11,12 +11,20 @@ const matchSchema = new mongoose.Schema({
   },
   players: [
     {
-      player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
+      _id: false,
+      player_id: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
+      username: String,
       role: String,
       score: Number,
     },
   ],
-  winners: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }],
+  winners: [
+    {
+      _id: false,
+      player_id: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
+      username: String,
+    },
+  ],
 })
 
 module.exports = mongoose.model("Match", matchSchema)

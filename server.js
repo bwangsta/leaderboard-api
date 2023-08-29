@@ -6,6 +6,7 @@ const cors = require("cors")
 const AppError = require("./utils/AppError")
 const matchesRouter = require("./routes/matches")
 const playersRouter = require("./routes/players")
+const rankingsRouter = require("./routes/rankings")
 
 const app = express()
 const PORT = 8080
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use("/matches", matchesRouter)
 app.use("/players", playersRouter)
+app.use("/rankings", rankingsRouter)
 
 app.all("*", (req, res, next) => {
   next(new AppError("Page Not Found", 404))
@@ -30,7 +32,7 @@ app.all("*", (req, res, next) => {
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something Went Wrong" } = err
   res.status(statusCode)
-  res.json({ message: message })
+  res.json({ status: statusCode, message: message })
 })
 
 app.listen(PORT, () => {

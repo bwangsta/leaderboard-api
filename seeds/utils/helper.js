@@ -9,8 +9,38 @@ function getRandom(min, max) {
   return Math.floor(Math.random() * (max - min) + min)
 }
 
+function generatePlayers(game, playerInfo) {
+  const players = []
+  const currentPlayers = new Set()
+  const numberOfPlayers = generateNumberOfPlayers(game)
+
+  let i = 0
+  while (i < numberOfPlayers) {
+    const player = {}
+    const index = getRandom(0, playerInfo.length)
+    const { _id, username } = playerInfo[index]
+
+    if (currentPlayers.has(_id)) {
+      continue
+    }
+    player.player_id = _id
+    player.username = username
+    if (generateRole(game)) {
+      player.role = generateRole(game)
+    }
+    if (generateScore(game)) {
+      player.score = generateScore(game)
+    }
+    players.push(player)
+    currentPlayers.add(_id)
+    i++
+  }
+
+  return players
+}
+
 // Generate random number of players depending on the game
-function generateNumberOfPlayers(game, playerIds) {
+function generateNumberOfPlayers(game) {
   let numberOfPlayers = 0
   switch (game) {
     case "Catan":
@@ -25,27 +55,8 @@ function generateNumberOfPlayers(game, playerIds) {
     case "Ticket To Ride":
       numberOfPlayers = getRandom(2, 6)
   }
-  const players = []
-  const uniquePlayers = new Set()
-  let i = 0
-  while (i < numberOfPlayers) {
-    const obj = {}
-    const index = getRandom(0, playerIds.length)
-    if (uniquePlayers.has(index)) {
-      continue
-    }
-    obj.player = playerIds[index]._id
-    if (generateRole(game)) {
-      obj.role = generateRole(game)
-    }
-    if (generateScore(game)) {
-      obj.score = generateScore(game)
-    }
-    players.push(obj)
-    uniquePlayers.add(index)
-    i++
-  }
-  return players
+
+  return numberOfPlayers
 }
 
 // Generate random score depending on the game
@@ -85,13 +96,13 @@ function generateRole(game) {
 function generateWinners(game, players) {
   if (game === "Bang") {
     const player = sample(players)
-    return player.player
+    return [player]
   }
-  winner = null
+  winner = { player_id: null, username: null }
   maxScore = -Infinity
-  for (const { player, score } of players) {
+  for (const { player_id, username, score } of players) {
     if (score >= maxScore) {
-      winner = player
+      winner = { player_id: player_id, username: username }
       maxScore = score
     }
   }
@@ -100,6 +111,6 @@ function generateWinners(game, players) {
 
 module.exports = {
   sample,
-  generateNumberOfPlayers,
+  generatePlayers,
   generateWinners,
 }
