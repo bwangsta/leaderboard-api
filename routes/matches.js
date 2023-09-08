@@ -22,7 +22,6 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const query = formatQuery(req.query)
-    console.log(query)
     const matches = await Match.find(query).sort({ date: "descending" }).exec()
     res.json(matches)
   })

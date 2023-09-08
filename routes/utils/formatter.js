@@ -1,11 +1,12 @@
 function formatQuery(query) {
   const { game, player } = query
+
   let newQuery = {}
   if (game) {
     newQuery = { ...newQuery, game: toTitleCase(game, "-") }
   }
   if (player) {
-    newQuery = { ...newQuery, players: { $elemMatch: { _id: player } } }
+    newQuery = { ...newQuery, players: { $elemMatch: { player_id: player } } }
   }
 
   return newQuery
