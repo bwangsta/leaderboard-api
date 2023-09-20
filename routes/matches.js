@@ -52,15 +52,15 @@ router.post(
 )
 
 // Update
-router.patch(
+router.put(
   "/:id",
   validateMatch,
   catchAsync(async (req, res) => {
     const { id } = req.params
-    await Match.findByIdAndUpdate(id, { ...req.body }).exec()
-    res.json({
-      message: `Successfully updated ${id}`,
-    })
+    const updatedMatch = await Match.findByIdAndUpdate(id, {
+      ...req.body,
+    }).exec()
+    res.status(200).json(updatedMatch)
   })
 )
 

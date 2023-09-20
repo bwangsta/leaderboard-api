@@ -11,6 +11,7 @@ const playerSchema = Joi.object({
 })
 
 const matchSchema = Joi.object({
+  _id: Joi.string(),
   date: Joi.date(),
   game: Joi.string().required(),
   players: Joi.array()
@@ -29,6 +30,7 @@ const matchSchema = Joi.object({
     )
     .min(1)
     .required(),
+  __v: Joi.number(),
 })
 
 module.exports = {
