@@ -69,8 +69,8 @@ router.delete(
   "/:id",
   catchAsync(async (req, res) => {
     const { id } = req.params
-    await Match.findByIdAndDelete(id).exec()
-    res.json({ message: "Successfully deleted " + id })
+    const deletedMatch = await Match.findByIdAndDelete(id).exec()
+    res.status(200).json(deletedMatch)
   })
 )
 
