@@ -7,6 +7,7 @@ const AppError = require("./utils/AppError")
 const matchesRouter = require("./routes/matches")
 const playersRouter = require("./routes/players")
 const rankingsRouter = require("./routes/rankings")
+const gamesRouter = require("./routes/games")
 
 const app = express()
 const PORT = 8080
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/matches", matchesRouter)
 app.use("/players", playersRouter)
 app.use("/rankings", rankingsRouter)
+app.use("/games", gamesRouter)
 
 app.all("*", (req, res, next) => {
   next(new AppError("Page Not Found", 404))
